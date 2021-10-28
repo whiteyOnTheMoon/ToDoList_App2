@@ -1,11 +1,13 @@
 package com.tinyapps.todoapp.ui.tasks
 
-//import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import com.tinyapps.todoapp.data.TaskDao
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class TasksViewModel //@ViewModelInject
-constructor(
-    private val taskDao: TaskDao
-) : ViewModel() {
+@HiltViewModel
+class TasksViewModel @Inject constructor(private val taskDao: TaskDao) : ViewModel() {
+
+    val tasks = taskDao.getTasks().asLiveData()
 }
