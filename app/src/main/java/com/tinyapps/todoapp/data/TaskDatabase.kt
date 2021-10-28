@@ -28,6 +28,7 @@ abstract class TaskDatabase : RoomDatabase() {
                 dao.insert(Task("2nd Task...", important = true))
                 dao.insert(Task("3rd Task..."))
                 dao.insert(Task("4th Task...", completed = true))
+                dao.insert(Task("5th Task...", important = true, completed = true))
 
             }
         }
