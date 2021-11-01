@@ -7,8 +7,10 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +19,7 @@ import com.tinyapps.todoapp.R
 import com.tinyapps.todoapp.data.SortOrder
 import com.tinyapps.todoapp.data.Task
 import com.tinyapps.todoapp.databinding.FragmentTasksBinding
+import com.tinyapps.todoapp.util.exhaustive
 import com.tinyapps.todoapp.util.onQueryTextChanged
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,9 +45,11 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClic
                 layoutManager = LinearLayoutManager(requireContext())
                 setHasFixedSize(true)
             }
-            
-            ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0,
-            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
+            ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            ) {
                 override fun onMove(
                     recyclerView: RecyclerView,
                     viewHolder: RecyclerView.ViewHolder,
@@ -58,6 +63,15 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClic
                     viewModel.onTaskSwiped(task)
                 }
             }).attachToRecyclerView(recyclerViewTasks)
+
+            fabAddTask.setOnClickListener {
+                viewModel.onAddNewTaskClick()
+            }
+        }
+
+        setFragmentResultListener("add_edit_request") { _, bundle ->
+            val result = bundle.getInt("add_edit_result")
+            viewModel.onAddEditResult(result)
         }
 
         viewModel.tasks.observe(viewLifecycleOwner) {
@@ -65,16 +79,35 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksAdapter.OnItemClic
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.tasksEvent.collect {
-                event->
-                when(event){
-                    is TasksViewModel.TasksEvent.ShowUndoDeleteTaskMessage->{
+            viewModel.tasksEvent.collect { event ->
+                when (event) {
+                    is TasksViewModel.TasksEvent.ShowUndoDeleteTaskMessage -> {
                         Snackbar.make(requireView(), "Task deleted", Snackbar.LENGTH_LONG)
-                            .setAction("Undo"){
+                            .setAction("Undo") {
                                 viewModel.onUndoDeleteClick(event.task)
                             }.show()
                     }
-                }
+                    is TasksViewModel.TasksEvent.NavigateToAddTaskScreen -> {
+                        val action =
+                            TasksFragmentDirections.actionTasksFragmentToAddEditTaskFragment(
+                                null,
+                                "New Task"
+                            )
+                        findNavController().navigate(action)
+                    }
+                    is TasksViewModel.TasksEvent.NavigateToEditTaskScreen -> {
+                        val action =
+                            TasksFragmentDirections.actionTasksFragmentToAddEditTaskFragment(
+                                event.task,
+                                "Edit Task"
+                            )
+                        findNavController().navigate(action)
+
+                    }
+                    is TasksViewModel.TasksEvent.ShowTaskSavedConfirmationMessage -> {
+                        Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT)
+                    }
+                }.exhaustive
             }
         }
 
