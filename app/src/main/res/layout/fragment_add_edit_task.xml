@@ -15,7 +15,7 @@
             android:id="@+id/check_box_important"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="important task" />
+            android:text="Important task" />
 
         <EditText
             android:id="@+id/edit_text_task_name"
@@ -28,7 +28,7 @@
             android:id="@+id/text_view_date_created"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Date created: " />
+            tools:text="Date created:" />
 
     </LinearLayout>
 
@@ -39,6 +39,5 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_check_mark" />
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

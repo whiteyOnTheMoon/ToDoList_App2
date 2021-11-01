@@ -13,6 +13,14 @@
         android:minWidth="0dp"
         android:minHeight="0dp" />
 
+    <ImageView
+        android:id="@+id/label_priority"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_priority" />
+
     <TextView
         android:id="@+id/text_view_name"
         android:layout_width="wrap_content"
@@ -25,14 +33,6 @@
         android:gravity="center_vertical"
         android:maxLines="1"
         android:textColor="@color/black"
-        tools:text="Example Item" />
-
-    <ImageView
-        android:id="@+id/label_priority"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/ic_priority" />
+        tools:text="Example item" />
 
 </RelativeLayout>

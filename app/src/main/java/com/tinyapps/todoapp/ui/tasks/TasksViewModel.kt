@@ -48,7 +48,7 @@ class TasksViewModel @Inject constructor(
         preferencesManager.updateSortOrder(sortOrder)
     }
 
-    fun onHideCompletedClick(hideCompleted: Boolean) = viewModelScope.launch {
+    fun onHideCompletedClicked(hideCompleted: Boolean) = viewModelScope.launch {
         preferencesManager.updateHideCompleted(hideCompleted)
     }
 
@@ -65,11 +65,11 @@ class TasksViewModel @Inject constructor(
         tasksEventChannel.send(TasksEvent.ShowUndoDeleteTaskMessage(task))
     }
 
-    fun onUndoDeleteClick(task: Task) = viewModelScope.launch {
+    fun onUndoDeleteClicked(task: Task) = viewModelScope.launch {
         taskDao.insert(task)
     }
 
-    fun onAddNewTaskClick() = viewModelScope.launch {
+    fun onAddNewTaskClicked() = viewModelScope.launch {
         tasksEventChannel.send(TasksEvent.NavigateToAddTaskScreen)
     }
 
@@ -84,10 +84,15 @@ class TasksViewModel @Inject constructor(
         tasksEventChannel.send(TasksEvent.ShowTaskSavedConfirmationMessage(text))
     }
 
+    fun onDeleteAllCompletedClicked() = viewModelScope.launch {
+        tasksEventChannel.send(TasksEvent.NavigateToDeleteAllCompletedScreen)
+    }
+
     sealed class TasksEvent {
         object NavigateToAddTaskScreen : TasksEvent()
         data class NavigateToEditTaskScreen(val task: Task) : TasksEvent()
         data class ShowUndoDeleteTaskMessage(val task: Task) : TasksEvent()
         data class ShowTaskSavedConfirmationMessage(val msg: String) : TasksEvent()
+        object NavigateToDeleteAllCompletedScreen : TasksEvent()
     }
 }
